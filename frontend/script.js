@@ -16,34 +16,38 @@ async function uploadFile() {
   try {
     const res = await fetch('/upload', { method: 'POST', body: formData });
     const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Upload failed');
     status.textContent = file.name + ' uploaded to S3 successfully!';
     fileInput.value = '';
     loadFiles();
   } catch (err) {
-    status.textContent = file.name + ' uploaded successfully! (Demo Mode)';
-    loadFiles();
+    status.textContent = 'Upload failed: ' + err.message;
   }
 }
 
 async function loadFiles() {
-  const fileList = document.getElementById('fileList');
+  const list = document.getElementById('fileList');
+  if (!list) return;
   try {
     const res = await fetch('/files');
     const files = await res.json();
-    fileList.innerHTML = '';
-    files.forEach((f) => {
-      const li = document.createElement('li');
-      li.innerHTML = `📄 <a href="${f.url}" target="_blank">${f.name}</a>`;
-      fileList.appendChild(li);
-    });
+    list.innerHTML = '';
     if (files.length === 0) {
-      fileList.innerHTML = '<li>Kono file nei</li>';
+      list.innerHTML = '<li>Kono file nei</li>';
+      return;
     }
+    files.forEach(f => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.href = f.url;
+      a.textContent = f.name;
+      a.target = '_blank';
+      li.appendChild(a);
+      list.appendChild(li);
+    });
   } catch (err) {
-    fileList.innerHTML = '<li>Files load hoche na - Server off ache</li>';
+    list.innerHTML = '<li>Files load hocche na</li>';
   }
 }
 
 window.onload = loadFiles;
-   
-  
