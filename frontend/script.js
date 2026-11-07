@@ -2,26 +2,20 @@ async function uploadFile() {
   const fileInput = document.getElementById('fileInput');
   const status = document.getElementById('status');
   const file = fileInput.files[0];
-
   if (!file) {
-    status.textContent = 'Please select a file first!';
+    status.textContent = 'Age ekta file choose koro!';
     return;
   }
-
-  status.textContent = 'Uploading to S3...';
-
   const formData = new FormData();
   formData.append('file', file);
-
+  status.textContent = 'Upload hocche...';
   try {
     const res = await fetch('/upload', { method: 'POST', body: formData });
     const data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Upload failed');
-    status.textContent = file.name + ' uploaded to S3 successfully!';
-    fileInput.value = '';
+    status.textContent = 'Upload hoye geche!';
     loadFiles();
   } catch (err) {
-    status.textContent = 'Upload failed: ' + err.message;
+    status.textContent = 'Upload hocche na!';
   }
 }
 
